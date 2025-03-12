@@ -255,12 +255,9 @@ Expected to be called within a Hy interpreter process buffer."
   (declare (indent 0))
   (let ((text-sym (gensym)))
     `(-when-let (,text-sym ,text)
-       (run-hy)
+       (hy-repl :move? nil)
        (hy-shell--with-live
-         ;; TODO Force the initial/end cases in a nicer way if possible
-         (hy-shell--send "\n")
-         (hy-shell--send ,text-sym)
-         (hy-shell--send "\n")))))
+         (hy-shell--send ,text-sym)))))
 
 ;;;; Commands
 
@@ -387,11 +384,12 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
   "Deprecated: use `hy-repl' instead.")
 
 ;;;###autoload
-(defun hy-repl ()
+(cl-defun hy-repl (&key (move? t))
   "Startup and/or switch to a Hy interpreter process."
   (interactive)
   (hy-shell--with
-    (switch-to-buffer-other-window (current-buffer))))
+    (when move?
+      (switch-to-buffer-other-window (current-buffer)))))
 
 ;;; Provide:
 

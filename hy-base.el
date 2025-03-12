@@ -98,7 +98,6 @@
   (save-excursion
     (-when-let (start (hy--goto-last-sexp-start (syntax-ppss)))
       (while (ignore-errors (forward-sexp)))
-
       (s-concat (buffer-substring-no-properties start (point))
                 "\n"))))
 
