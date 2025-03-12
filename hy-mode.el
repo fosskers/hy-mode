@@ -43,7 +43,6 @@
 ;;; Code:
 
 (require 'hy-base)
-
 (require 'hy-font-lock)
 (require 'hy-shell)
 (require 'hy-jedhy)
@@ -71,7 +70,7 @@ Examples:
 
 (defvar hy-indent--fuzzily
   '("def"
-    "let"
+    "let" "match"
     "with" "with/a"
     "fn" "fn/a")
   "Symbols that will have following lines indented +1 when matched at start.

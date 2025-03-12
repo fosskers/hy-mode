@@ -30,7 +30,6 @@
 ;;; Code:
 
 (require 'hy-base)
-
 (require 'hy-font-lock)
 
 ;;; Configuration
@@ -38,6 +37,11 @@
 
 (defvar hy-shell--interpreter "hy"
   "Default Hy interpreter name.")
+
+(defvar hy-shell--interpreter-wrapper nil
+  "Wrap the hy call in some other tool, for example uv, in order to
+guarantee that a local venv is respected for loading dependencies. Must
+be a keyword, and currently only understands `:uv'.")
 
 (defvar hy-shell--interpreter-args '("--spy")
   "Default argument list to pass to the Hy interpreter.")
@@ -119,10 +123,13 @@
 
 (defun hy-shell--format-startup-command ()
   "Format Hy shell startup command."
-  (let ((prog (shell-quote-argument hy-shell--interpreter))
-        (switches (->> hy-shell--interpreter-args
-                     (-map #'shell-quote-argument)
-                     (s-join " "))))
+  (let* ((progs (cl-case hy-shell--interpreter-wrapper
+                  (:uv (list "uv" "run" (shell-quote-argument hy-shell--interpreter)))
+                  (t (list (shell-quote-argument hy-shell--interpreter)))))
+         (prog (s-join " " progs))
+         (switches (->> hy-shell--interpreter-args
+                        (-map #'shell-quote-argument)
+                        (s-join " "))))
     (if (hy-shell--internal?)
         prog
       (format "%s %s" prog switches))))
