@@ -31,6 +31,7 @@
 
 (require 'hy-base)
 (require 'hy-font-lock)
+(require 'hy-overlay)
 
 ;;; Configuration
 ;;;; Configured
@@ -270,6 +271,11 @@ Will display the results as an overlay."
     (hy--current-form-string))
   ;; FIXME: Brittle for longer evaluations.
   (sleep-for 0.1)
+  (hy-overlay--eval-overlay
+   hy-shell--last-eval
+   (save-excursion
+     (end-of-defun)
+     (point)))
   (message "=> %s" hy-shell--last-eval))
 
 ;;;###autoload
