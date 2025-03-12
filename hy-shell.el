@@ -383,8 +383,11 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
 
 ;;;; Running
 
+(defalias 'run-hy #'hy-repl
+  "Deprecated: use `hy-repl' instead.")
+
 ;;;###autoload
-(defun run-hy ()
+(defun hy-repl ()
   "Startup and/or switch to a Hy interpreter process."
   (interactive)
   (hy-shell--with
