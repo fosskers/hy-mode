@@ -105,6 +105,16 @@ be a keyword, and currently only understands `:uv'.")
 ;;; Process Management
 ;;;; Utilities
 
+(defun hy-shell--project-root ()
+  "Yields the absolute path of the nearest parent directory that contains a
+pyproject.toml file."
+  (cl-labels ((recurse (dir)
+                (unless (equal "/" dir)
+                  (if (member "pyproject.toml" (directory-files dir))
+                      dir
+                    (recurse (file-name-parent-directory dir))))))
+    (recurse default-directory)))
+
 (defun hy-shell--live? ()
   "Is the Hy intereprter process alive?"
   (get-buffer-process hy-shell--buffer-name))
@@ -124,7 +134,9 @@ be a keyword, and currently only understands `:uv'.")
 (defun hy-shell--format-startup-command ()
   "Format Hy shell startup command."
   (let* ((progs (cl-case hy-shell--interpreter-wrapper
-                  (:uv (list "uv" "run" (shell-quote-argument hy-shell--interpreter)))
+                  (:uv (let* ((root (hy-shell--project-root))
+                              (dirs (if root `("--directory" ,root) '())))
+                         (cons "uv" (append dirs `("run" ,(shell-quote-argument hy-shell--interpreter))))))
                   (t (list (shell-quote-argument hy-shell--interpreter)))))
          (prog (s-join " " progs))
          (switches (->> hy-shell--interpreter-args
@@ -334,18 +346,14 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
 (define-derived-mode inferior-hy-mode comint-mode "Inferior Hy"
   "Major mode for Hy inferior process."
   (setenv "PYTHONIOENCODING" "UTF-8")
-
   (setq-local indent-tabs-mode nil)
   (setq-local comint-prompt-read-only t)
   (setq-local comint-prompt-regexp (rx bol "=>" space))
   (hy-inferior--fix-comint-input-history-breaking)
-
   (setq-local comint-preoutput-filter-functions nil)
   (setq-local comint-output-filter-functions nil)
-
   (hy-inferior--support-colorama-output)
   (hy-inferior--support-xterm-color)
-
   (when hy-shell--enable-font-lock?
     (hy-inferior--support-font-locking-input)))
 
@@ -358,21 +366,18 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
 (defun hy-shell--kill ()
   "Kill the Hy interpreter process."
   (interactive)
-
   (-when-let (buff (get-buffer hy-shell--buffer-name))
     (kill-buffer buff)))
 
 (defun hy-shell--kill-internal ()
   "Kill the internal Hy interpreter process."
   (interactive)
-
   (-when-let (buff (get-buffer hy-shell--buffer-name-internal))
     (kill-buffer buff)))
 
 (defun hy-shell--kill-all ()
   "Kill all Hy interpreter processes."
   (interactive)
-
   (hy-shell--kill)
   (hy-shell--kill-internal))
 
@@ -382,7 +387,6 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
 (defun run-hy ()
   "Startup and/or switch to a Hy interpreter process."
   (interactive)
-
   (hy-shell--with
     (switch-to-buffer-other-window (current-buffer))))
 
