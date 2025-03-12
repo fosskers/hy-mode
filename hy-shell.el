@@ -261,18 +261,39 @@ Expected to be called within a Hy interpreter process buffer."
 
 ;;;; Commands
 
+;;;###autoload
+(defun hy-shell-eval-current-form-overlay ()
+  "Send form containing point to the Hy interpreter, starting up if needed.
+Will display the results as an overlay."
+  (interactive)
+  (hy-shell--eval-1
+    (hy--current-form-string))
+  ;; FIXME: Brittle for longer evaluations.
+  (sleep-for 0.1)
+  (message "=> %s" hy-shell--last-eval))
+
+;;;###autoload
+(defun hy-shell-eval-text (text)
+  "Just evaluate some given text."
+  (interactive "sHy: ")
+  (hy-shell--eval-1
+    (concat text "\n")))
+
+;;;###autoload
 (defun hy-shell-eval-current-form ()
   "Send form containing point to the Hy interpreter, starting up if needed."
   (interactive)
   (hy-shell--eval-1
     (hy--current-form-string)))
 
+;;;###autoload
 (defun hy-shell-eval-last-sexp ()
   "Send the last sexp to the Hy interpreter, starting up if needed."
   (interactive)
   (hy-shell--eval-1
     (hy--last-sexp-string)))
 
+;;;###autoload
 (defun hy-shell-eval-region ()
   "Send region to the Hy interpreter, starting up if needed."
   (interactive)
@@ -280,6 +301,7 @@ Expected to be called within a Hy interpreter process buffer."
     (hy-shell--eval-1
       (buffer-substring (region-beginning) (region-end)))))
 
+;;;###autoload
 (defun hy-shell-eval-buffer ()
   "Send the current buffer to the Hy interpreter, starting up if needed."
   (interactive)
@@ -344,7 +366,9 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
 
 (defun hy-shell--capture-output (output)
   "A hook function for capturing some output from comint."
-  (setq hy-shell--last-eval (car (string-split (substring-no-properties output)))))
+  (let ((new (string-trim (car (string-split (substring-no-properties output) "[\n]+")))))
+    (when (not (equal "=>" new))
+      (setq hy-shell--last-eval new))))
 
 ;;;###autoload
 (define-derived-mode inferior-hy-mode comint-mode "Inferior Hy"
