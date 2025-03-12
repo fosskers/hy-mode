@@ -339,6 +339,13 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
 
 ;;;; Mode Declaration
 
+(defvar hy-shell--last-eval nil
+  "The result of the last eval invocation.")
+
+(defun hy-shell--capture-output (output)
+  "A hook function for capturing some output from comint."
+  (setq hy-shell--last-eval (car (string-split (substring-no-properties output)))))
+
 ;;;###autoload
 (define-derived-mode inferior-hy-mode comint-mode "Inferior Hy"
   "Major mode for Hy inferior process."
@@ -349,6 +356,7 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
   (hy-inferior--fix-comint-input-history-breaking)
   (setq-local comint-preoutput-filter-functions nil)
   (setq-local comint-output-filter-functions nil)
+  (add-hook 'comint-output-filter-functions #'hy-shell--capture-output)
   (hy-inferior--support-colorama-output)
   (hy-inferior--support-xterm-color)
   (when hy-shell--enable-font-lock?
