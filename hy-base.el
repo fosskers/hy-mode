@@ -84,14 +84,22 @@
 
 ;;; Form Captures
 
+(defun hy--region-for-defun-at-point (&optional pos)
+  "Return a list (START END) for the positions of defun at POS.
+POS defaults to point."
+  (save-excursion
+    (save-match-data
+      (goto-char (or pos (point)))
+      (end-of-defun)
+      (let ((end (point)))
+        (beginning-of-defun)
+        (list (point) end)))))
+
 (defun hy--current-form-string ()
   "Get form containing current point as string plus a trailing newline."
-  (save-excursion
-    (-when-let (start (hy--goto-inner-char (syntax-ppss)))
-      (while (ignore-errors (forward-sexp)))
-
-      (s-concat (buffer-substring-no-properties start (point))
-                "\n"))))
+  (pcase (hy--region-for-defun-at-point)
+    (`(,start ,end) (concat (string-trim (buffer-substring-no-properties start end))
+                            "\n"))))
 
 (defun hy--last-sexp-string ()
   "Get form containing last s-exp point as string plus a trailing newline."
