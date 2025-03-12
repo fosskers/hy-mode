@@ -242,13 +242,10 @@
     "defmacro" "defmacro/g!" "defmacro!"
 
     ;; Tag Macros
-    "deftag"
+    "defreader"
 
     ;; Defining __main__
-    "defmain"
-
-    ;; Multi-methods
-    "defmulti" "defmethod")
+    "defmain")
   "Names in Hy that define functions, macros, etc.")
 
 ;;;; Operators
@@ -271,12 +268,14 @@
     "->" "->>" "as->"
 
     ;; Flow control
+    "let"
     "return"
     "if" "if*" "if-not" "lif" "lif-not"
     "else" "unless" "when"
     "break" "continue" "while"
     "cond"
     "do"
+    "match"
 
     ;; Functional
     "fn" "fn/a"
@@ -297,7 +296,10 @@
     "global" "nonlocal"
 
     ;; Evaluation
-    "eval" "eval-and-compile" "eval-when-compile")
+    "eval" "eval-and-compile" "eval-when-compile"
+
+    ;; Misc.
+    "comment")
   "Special names like compiler stuff to highlight as keywords.")
 
 ;;;; Anaphorics
