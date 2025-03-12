@@ -144,13 +144,10 @@ be a keyword, and currently only understands `:uv'.")
            (name
             (if (hy-shell--internal?) hy-shell--name-internal hy-shell--name)))
       (apply #'make-comint-in-buffer name nil program nil switches)
-
       (unless (derived-mode-p 'inferior-hy-mode)
         (inferior-hy-mode))
-
       ;; Get shell's initial output/prompt
       (accept-process-output (hy-shell--current-process) 0.5)
-
       (hy-shell--current-process))))
 
 (defun hy-shell--make-comint-internal ()
@@ -184,9 +181,9 @@ be a keyword, and currently only understands `:uv'.")
   "Avoid infinite loop in redirect if `comint-prompt-regexp' badly defined."
   (when comint-redirect-perform-sanity-check
     (save-excursion
-	    (goto-char (point-max))
-	    (or (re-search-backward comint-prompt-regexp nil t)
-		      (error "No prompt found or `comint-prompt-regexp' not set properly")))))
+      (goto-char (point-max))
+      (or (re-search-backward comint-prompt-regexp nil t)
+          (error "No prompt found or `comint-prompt-regexp' not set properly")))))
 
 (defun hy-shell--redirect-send-1 (text)
   "Internal implementation of `comint-redirect-send-command-to-process'.
@@ -204,7 +201,7 @@ Expected to be called within a Hy interpreter process buffer."
 
     (process-send-string buffer (s-concat text "\n"))
     (while (and (null comint-redirect-completed)
-		            (accept-process-output process timeout)))))
+                (accept-process-output process timeout)))))
 
 (defun hy-shell--redirect-send (text)
   "Send TEXT to Hy interpreter, capturing and removing the output."
@@ -353,7 +350,7 @@ a blog post: http://www.modernemacs.com/post/comint-highlighting/."
     (hy-inferior--support-font-locking-input)))
 
 (define-key inferior-hy-mode-map (kbd "C-c C-z")
-  (lambda () (interactive) (other-window -1)))
+            (lambda () (interactive) (other-window -1)))
 
 ;;; Commands
 ;;;; Killing

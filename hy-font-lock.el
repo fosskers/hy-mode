@@ -211,8 +211,8 @@
     "None"
     "Ellipsis"
     "NotImplemented"
-    "nil"  ; Provided for those that alias None as nil, not a part of Hy
-    )
+    "nil")  ; Provided for those that alias None as nil, not a part of Hy
+
   "Constant names in Hy.")
 
 ;;;; Exceptions
@@ -325,11 +325,11 @@
   (list
    (rx-to-string
     `(: symbol-start
-        (or ,@hy-font-lock--hy-builtins
-            ,@hy-font-lock--python-builtins
-            ,@hy-font-lock--operators
-            ,@hy-font-lock--anaphorics)
-        symbol-end))
+      (or ,@hy-font-lock--hy-builtins
+          ,@hy-font-lock--python-builtins
+          ,@hy-font-lock--operators
+          ,@hy-font-lock--anaphorics)
+      symbol-end))
 
    '(0 font-lock-builtin-face))
   "Hy builtin keywords.")
@@ -338,8 +338,8 @@
   (list
    (rx-to-string
     `(: symbol-start
-        (or ,@hy-font-lock--constants)
-        symbol-end))
+      (or ,@hy-font-lock--constants)
+      symbol-end))
 
    '(0 font-lock-constant-face))
   "Hy constant keywords.")
@@ -348,10 +348,10 @@
   (list
    (rx-to-string
     `(: "("
-        symbol-start
-        (group-n 1 (or ,@hy-font-lock--definitions))
-        (1+ space)
-        (group-n 2 (1+ word))))
+      symbol-start
+      (group-n 1 (or ,@hy-font-lock--definitions))
+      (1+ space)
+      (group-n 2 (1+ word))))
 
    '(1 font-lock-keyword-face)
    '(2 font-lock-function-name-face nil t))
@@ -361,8 +361,8 @@
   (list
    (rx-to-string
     `(: symbol-start
-        (or ,@hy-font-lock--exceptions)
-        symbol-end))
+      (or ,@hy-font-lock--exceptions)
+      symbol-end))
 
    '(0 font-lock-type-face))
   "Hy exception keywords.")
@@ -371,8 +371,8 @@
   (list
    (rx-to-string
     `(: symbol-start
-        (or ,@hy-font-lock--special-names)
-        symbol-end))
+      (or ,@hy-font-lock--special-names)
+      symbol-end))
 
    '(0 font-lock-keyword-face))
   "Hy special names keywords.")

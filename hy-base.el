@@ -15,6 +15,8 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with hy-mode.  If not, see <http://www.gnu.org/licenses/>.
+;;
+;; Package-Requires: ((dash "2.19"))
 
 ;; This file is not part of GNU Emacs.
 
