@@ -274,6 +274,27 @@ commands."
   (setq-local eldoc-documentation-function #'hy-eldoc-documentation-function)
   (eldoc-mode +1))
 
+;;;; hy2py
+
+;;;###autoload
+(defun hy-mode-hy2py ()
+  "Run hy2py on the current file and open the result in a popup."
+  (interactive)
+  (let ((file (buffer-file-name))
+        (buffer (get-buffer-create "*hy2py*")))
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
+        (erase-buffer)))
+    (shell-command (format "uv run hy2py %s" file) buffer)
+    (with-current-buffer buffer
+      (python-mode)
+      (read-only-mode)
+      (local-set-key (kbd "q")
+                     (lambda ()
+                       (interactive)
+                       (quit-window t))))
+    (pop-to-buffer buffer)))
+
 ;;; hy-mode
 
 ;;;###autoload
