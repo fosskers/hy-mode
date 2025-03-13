@@ -84,6 +84,22 @@
 
 ;;; Form Captures
 
+(defun hy--first-atom ()
+  "Yield the first atom of a sexp at `point'. Probably a function name, but might not be."
+  (save-excursion
+    ;; NOTE: 2025-03-13 A little trick to ensure that `point' is in the right
+    ;; place.
+    (end-of-defun)
+    (beginning-of-defun)
+    (forward-char)
+    (let ((start (point)))
+      (forward-thing 'whitespace)
+      (string-trim (buffer-substring-no-properties start (point))))))
+
+(defun hy--in-comment? ()
+  "Is the sexp at `point' a comment block?"
+  (equal "comment" (hy--first-atom)))
+
 (defun hy--region-for-defun-at-point (&optional pos)
   "Return a list (START END) for the positions of defun at POS.
 POS defaults to point."
@@ -93,13 +109,23 @@ POS defaults to point."
       (end-of-defun)
       (let ((end (point)))
         (beginning-of-defun)
-        (list (point) end)))))
+        (cond ((hy--in-comment?)
+               (forward-word)
+               (list (point) end :comment))
+              (t (list (point) end)))))))
 
 (defun hy--current-form-string ()
   "Get form containing current point as string plus a trailing newline."
   (pcase (hy--region-for-defun-at-point)
-    (`(,start ,end) (concat (string-trim (buffer-substring-no-properties start end))
-                            "\n"))))
+    (`(,start ,end :comment) (thread-first
+                               (buffer-substring-no-properties start end)
+                               (string-trim)
+                               (string-trim-right "[)]")
+                               (concat "\n")))
+    (`(,start ,end) (thread-first
+                      (buffer-substring-no-properties start end)
+                      (string-trim)
+                      (concat "\n")))))
 
 (defun hy--last-sexp-string ()
   "Get form containing last s-exp point as string plus a trailing newline."
