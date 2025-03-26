@@ -307,14 +307,10 @@ commands."
   "Major mode for editing Hy files."
   (hy-mode--setup-font-lock)
   (hy-mode--setup-syntax)
-
   (hy-mode--support-smartparens)
-
   (when hy-jedhy--enable?
     (hy-mode--setup-jedhy)
-
     (hy-mode--support-eldoc)
-
     (when (featurep 'company)
       (hy-mode--support-company)
       (add-hook 'inferior-hy-mode-hook #'hy-mode--support-company))))
@@ -326,12 +322,10 @@ commands."
 ;;;; Shell
 
 (define-key hy-mode-map (kbd "C-c C-z") #'run-hy)
-
 (define-key hy-mode-map (kbd "C-c C-b") #'hy-shell-eval-buffer)
 (define-key hy-mode-map (kbd "C-c C-r") #'hy-shell-eval-region)
 (define-key hy-mode-map (kbd "C-c C-e") #'hy-shell-eval-last-sexp)
 (define-key hy-mode-map (kbd "C-M-x") #'hy-shell-eval-current-form)
-
 (define-key hy-mode-map (kbd "C-c C-d d") #'hy-describe-thing-at-point)
 (define-key hy-mode-map (kbd "C-c C-d C-d") #'hy-describe-thing-at-point)
 

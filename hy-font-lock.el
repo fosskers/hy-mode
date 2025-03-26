@@ -236,7 +236,7 @@
 
 (defconst hy-font-lock--definitions
   '(;; Functions
-    "defn" "defn/a"
+    "defn" "defn/a" "defclass"
 
     ;; Macros
     "defmacro" "defmacro/g!" "defmacro!"
